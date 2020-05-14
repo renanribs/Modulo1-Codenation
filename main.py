@@ -16,25 +16,27 @@ records = [
 ]
 
 
+def calcula_segundos():
+    for record in records:
+        segundosini = datetime.fromtimestamp(record['start'])
+        segundosfin = datetime.fromtimestamp(record['end'])
+        segundos = segundosfin.second - segundosini.second
+        return segundos
+
+
+def calcula_minutos():
+    for record in records:
+        start = datetime.fromtimestamp(record['start'])
+        end = datetime.fromtimestamp((record['end']))
+        minutostotal = end.minute - start.minute
+        return minutostotal
+
+
 def calcula_hora_inicio():
     for record in records:
         start = datetime.fromtimestamp(record['start'])
         hora_inicio = start.hour
         return hora_inicio
-
-
-def calcula_minutos_inicio():
-    for record in records:
-        minutos = datetime.fromtimestamp(record['start'])
-        minutos_inicio = minutos.minute
-        return minutos_inicio
-
-
-def calcula_segundos_inicio():
-    for record in records:
-        segundos = datetime.fromtimestamp(record['start'])
-        segundos_final = segundos.second
-        return segundos_final
 
 
 def calcula_hora_final():
@@ -44,42 +46,26 @@ def calcula_hora_final():
         return hora_final
 
 
-def calcula_minutos_final():
-    for record in records:
-        minutos = datetime.fromtimestamp(record['end'])
-        minutos_final = minutos.minute
-        return minutos_final
-
-
-def calcula_segundos_final():
-    for record in records:
-        segundos = datetime.fromtimestamp(record['end'])
-        segundos_final = segundos.second
-        return segundos_final
-
-
 horaInicio = calcula_hora_inicio()
-minutoInicio = calcula_minutos_inicio()
-segundosInicio = calcula_segundos_inicio()
-
 horaFinal = calcula_hora_final()
-minutoFinal = calcula_minutos_final()
-segundosFinal = calcula_segundos_final()
-
+totalsegundos = calcula_segundos()
+totalminutos = calcula_minutos()
 taxa_fixa = 0.36
 taxa_minuto = 0.09
 
 
 def calcula_preco():
-    if 22 > horaInicio >= 6:
-        soma_minutos = (horaInicio * 60) + minutoInicio + (segundosInicio // 60)
-        total_minutos = 0
-        if horaFinal < 22 or (horaFinal == 22 and minutoFinal == 0):
-            total_minutos = (horaFinal * 60) + minutoFinal + (segundosFinal // 60)
-        else:
-            total_minutos = 22 * 60
-        preco_total = (int(total_minutos - soma_minutos) * taxa_minuto) + taxa_fixa
-    return round(preco_total, 2)
+    preco_total = 0
+
+    if horaInicio >= 6:
+        if horaFinal <= 21 and totalminutos <= 59:
+            preco_total = totalsegundos * taxa_minuto + taxa_fixa
+
+        if horaFinal >= 22 and totalminutos > 0:
+            preco_total += taxa_fixa
+    else:
+        preco_total = taxa_fixa
+    return preco_total
 
 
 def classify_by_phone_number(records):
@@ -90,6 +76,9 @@ def classify_by_phone_number(records):
         if lista == -1:
             ligacoes.append({'source': record['source'], 'total': valor})
         else:
-            ligacoes[lista]['total'] = valor + ligacoes[lista]['total']
+            ligacoes[lista]['total'] = round(valor + ligacoes[lista]['total'], 2)
     ligacoes.sort(key=lambda k: k['total'], reverse=True)
     return ligacoes
+
+
+print(classify_by_phone_number(records))
