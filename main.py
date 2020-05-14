@@ -46,16 +46,14 @@ def calcula_hora_final():
         return hora_final
 
 
-horaInicio = calcula_hora_inicio()
-horaFinal = calcula_hora_final()
-totalsegundos = calcula_segundos()
-totalminutos = calcula_minutos()
-taxa_fixa = 0.36
-taxa_minuto = 0.09
-
-
 def calcula_preco():
     preco_total = 0
+    horaInicio = calcula_hora_inicio()
+    horaFinal = calcula_hora_final()
+    totalsegundos = calcula_segundos()
+    totalminutos = calcula_minutos()
+    taxa_fixa = 0.36
+    taxa_minuto = 0.09
 
     if horaInicio >= 6:
         if horaFinal <= 21 and totalminutos <= 59:
